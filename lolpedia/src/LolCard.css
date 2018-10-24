@@ -1,0 +1,16 @@
+.LolCard {
+    padding: 35px;
+    text-align: center;
+    margin-top: 15px;
+    flex-grow: 1;
+    flex-basis: 0;
+    background-color: #fff;
+}
+
+.LolCard h3 {
+    font-size: 1.35em;
+}
+
+.LolCard img {
+    
+}
