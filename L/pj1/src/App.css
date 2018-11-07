@@ -54,3 +54,7 @@ span {
 .btnTang {
   margin-left: 5px;
 }
+
+.active {
+  border: solid 3px black;
+}
