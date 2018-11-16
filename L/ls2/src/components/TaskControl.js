@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import TaskSearchControl from "./TaskSearchControl";
-import TaskSortControl from "./TaskSortControl";
+import TaskSearchControl from "./TaskSearch";
+import TaskSortControl from "./TaskSort";
 
 class TaskControl extends Component {
   render() {

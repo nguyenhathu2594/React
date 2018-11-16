@@ -1,13 +1,9 @@
 import React, { Component } from "react";
 import "./App.css";
 import TaskForm from "./components/TaskForm";
+import TaskControl from "./components/TaskControl";
 
 class App extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {};
-  }
-
   render() {
     return (
       <div className="container">
@@ -20,7 +16,9 @@ class App extends Component {
             <TaskForm />
           </div>
 
-          <div className="col-xs-8 col-sm-8 col-md-8 col-lg-8" />
+          <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
+            <TaskControl />
+          </div>
         </div>
       </div>
     );
