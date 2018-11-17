@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import "./App.css";
 import TaskForm from "./components/TaskForm";
 import TaskControl from "./components/TaskControl";
+import TaskList from "./components/TaskList";
 
 class App extends Component {
   render() {
@@ -16,8 +17,9 @@ class App extends Component {
             <TaskForm />
           </div>
 
-          <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
+          <div className="col-xs-8 col-sm-8 col-md-8 col-lg-8">
             <TaskControl />
+            <TaskList />
           </div>
         </div>
       </div>
