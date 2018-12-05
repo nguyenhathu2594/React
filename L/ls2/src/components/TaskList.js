@@ -3,6 +3,19 @@ import TaskItems from "./TaskItems";
 
 class TaskList extends Component {
   render() {
+    //Nhận giá trị truyền từ App sang bằng gọi props
+    var { tasks } = this.props;
+    //Đọc dữ liệu bằng for trong tasks
+    var elmTasks = tasks.map((task, index) => {
+      return (
+        <TaskItems
+          onUpdateStatus={this.props.onUpdateStatus}
+          key={task.id}
+          index={index}
+          task={task}
+        />
+      );
+    });
     return (
       <table className="table table-bordered table-hover mt-15">
         <thead>
@@ -28,7 +41,7 @@ class TaskList extends Component {
             </td>
             <td />
           </tr>
-          <TaskItems />
+          {elmTasks}
         </tbody>
       </table>
     );
