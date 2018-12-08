@@ -5,6 +5,9 @@ class TaskItems extends Component {
     //Lấy id để truyền lên trên task list sau đó trả về App.js
     this.props.onUpdateStatus(this.props.task.id);
   };
+  onDelete = () => {
+    this.props.onDelete(this.props.task.id);
+  };
   render() {
     //Nhận giá trị từ TaskList(2 giá trị)
     var { task, index } = this.props;
@@ -28,7 +31,11 @@ class TaskItems extends Component {
             Sửa
           </button>
           &nbsp;
-          <button type="button" className="btn btn-danger">
+          <button
+            type="button"
+            className="btn btn-danger"
+            onClick={this.onDelete}
+          >
             <span className="fa fa-trash mr-5" /> Xóa
           </button>
         </td>

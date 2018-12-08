@@ -117,6 +117,22 @@ class App extends Component {
     }
   };
 
+  onDelete = id => {
+    var { tasks } = this.state;
+    var item = this.findIndex(id);
+    if (item !== -1) {
+      tasks.splice(item, 1);
+      this.setState({
+        tasks: tasks
+      });
+      //Lưu vào localStore convert sang json để lưu lại
+      localStorage.setItem("tasks", JSON.stringify(tasks));
+
+      //Đóng form thêm mới
+      this.cancelJob();
+    }
+  };
+
   //Tìm giá trị
   findIndex = id => {
     var { tasks } = this.state;
@@ -177,7 +193,11 @@ class App extends Component {
             </button> */}
             <TaskControl />
             {/* Truyền dữ liệu sang TaskList */}
-            <TaskList tasks={tasks} onUpdateStatus={this.onUpdateStatus} />
+            <TaskList
+              tasks={tasks}
+              onUpdateStatus={this.onUpdateStatus}
+              onDelete={this.onDelete}
+            />
           </div>
         </div>
       </div>
