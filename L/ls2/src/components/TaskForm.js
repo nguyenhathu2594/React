@@ -4,9 +4,20 @@ class TaskForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      id: "",
       name: "",
       status: false
     };
+  }
+
+  componentWillMount() {
+    if (this.props.taskEditing) {
+      this.setState({
+        id: this.props.taskEditing.id,
+        name: this.props.taskEditing.name,
+        status: this.props.taskEditing.status
+      });
+    }
   }
 
   onChange = event => {
@@ -32,7 +43,7 @@ class TaskForm extends Component {
       <div className="panel panel-warning">
         <div className="panel-heading">
           <h3 className="panel-title">
-            Thêm công việc
+            {this.props.taskEditing ? "Sửa công việc" : "Thêm công việc"}
             <span
               className="fa fa-times-circle text-right"
               onClick={this.cancelJob}

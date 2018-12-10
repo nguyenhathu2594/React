@@ -9,7 +9,12 @@ class App extends Component {
     super(props);
     this.state = {
       tasks: [], //id: duy nhất, name, status
-      isDisplayForm: false
+      isDisplayForm: false,
+      taskEditing: null,
+      filter: {
+        name: "",
+        status: -1
+      }
     };
   }
 
@@ -83,22 +88,31 @@ class App extends Component {
 
   cancelJob = () => {
     this.setState({
-      isDisplayForm: false
+      isDisplayForm: false,
+      taskEditing: null
     });
   };
 
   //Nhận giá trị từ TaskForm truyền lên
   onSubmit = data => {
-    var task = {
-      id: this.generateID(),
-      name: data.name,
-      status: data.status === "true" ? true : false //Ép kiểu
-    };
     var { tasks } = this.state;
-    tasks.push(task); //Đẩy giá trị mới vào trong tasks
+    //Thêm mới
+    if (data.id === "") {
+      var task = {
+        id: this.generateID(),
+        name: data.name,
+        status: data.status === "true" ? true : false //Ép kiểu
+      };
+      tasks.push(task); //Đẩy giá trị mới vào trong tasks
+    } else {
+      //Sửa
+      var index = this.findIndex(data.id);
+      tasks[index] = data;
+    }
     this.setState({
       tasks: tasks,
-      isDisplayForm: false
+      isDisplayForm: false,
+      taskEditing: null
     });
     //Lưu vào localStore convert sang json để lưu lại
     localStorage.setItem("tasks", JSON.stringify(tasks));
@@ -133,6 +147,18 @@ class App extends Component {
     }
   };
 
+  onUpdate = id => {
+    var { tasks } = this.state;
+    var item = this.findIndex(id);
+    var taskEditing = tasks[item];
+    if (item !== -1) {
+      this.setState({
+        taskEditing: taskEditing
+      });
+      this.addNewJob();
+    }
+  };
+
   //Tìm giá trị
   findIndex = id => {
     var { tasks } = this.state;
@@ -145,11 +171,41 @@ class App extends Component {
     return result;
   };
 
+  onFilter = (filterName, filterStatus) => {
+    filterStatus = parseInt(filterStatus, 10);
+    this.setState({
+      filter: {
+        name: filterName.toLowerCase(),
+        status: filterStatus
+      }
+    });
+  };
+
   render() {
     //Đọc dữ liệu state rồi truyền vào 1 biến task
-    var { tasks, isDisplayForm } = this.state;
+    var { tasks, isDisplayForm, taskEditing } = this.state;
+    if (this.state.filter) {
+      if (this.state.filter.name) {
+        tasks = tasks.filter(task => {
+          return task.name.toLowerCase().indexOf(this.state.filter.name) !== -1;
+        });
+      }
+      tasks = tasks.filter(task => {
+        if (this.state.filter.status === -1) {
+          return tasks;
+        } else {
+          return (
+            task.status === (this.state.filter.status === 1 ? true : false)
+          );
+        }
+      });
+    }
     var elmTskForm = isDisplayForm ? (
-      <TaskForm onSubmit={this.onSubmit} cancelJob={this.cancelJob} />
+      <TaskForm
+        onSubmit={this.onSubmit}
+        cancelJob={this.cancelJob}
+        taskEditing={taskEditing}
+      />
     ) : (
       ""
     );
@@ -197,6 +253,8 @@ class App extends Component {
               tasks={tasks}
               onUpdateStatus={this.onUpdateStatus}
               onDelete={this.onDelete}
+              onUpdate={this.onUpdate}
+              onFilter={this.onFilter}
             />
           </div>
         </div>
