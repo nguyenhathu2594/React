@@ -23,5 +23,8 @@
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ]
+  ],
+  "homepage": "https://github.com/nguyenhathu2594/QLCV.git",
+  "predeploy": "npm run build",
+  "deploy": "gh-pages -d build"
 }
