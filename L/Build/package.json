@@ -2,6 +2,7 @@
   "name": "pj1",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://github.com/nguyenhathu2594/QLCV.git",
   "dependencies": {
     "gh-pages": "^2.0.1",
     "lodash": "^4.17.11",
@@ -13,7 +14,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -24,7 +27,4 @@
     "not ie <= 11",
     "not op_mini all"
   ],
-  "homepage": "https://github.com/nguyenhathu2594/QLCV.git",
-  "predeploy": "npm run build",
-  "deploy": "gh-pages -d build"
 }
