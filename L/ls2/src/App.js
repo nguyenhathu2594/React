@@ -3,6 +3,7 @@ import "./App.css";
 import TaskForm from "./components/TaskForm";
 import TaskControl from "./components/TaskControl";
 import TaskList from "./components/TaskList";
+import _ from "lodash";
 
 class App extends Component {
   constructor(props) {
@@ -14,7 +15,10 @@ class App extends Component {
       filter: {
         name: "",
         status: -1
-      }
+      },
+      keyword: "",
+      sortBy: "name",
+      sortValue: 1
     };
   }
 
@@ -119,9 +123,13 @@ class App extends Component {
   };
 
   onUpdateStatus = id => {
-    var item = this.findIndex(id);
+    var { tasks } = this.state;
+    //var item = this.findIndex(id); //Sử dụng tự thiết kế
+    //Sử dụng lodash
+    var item = _.findIndex(tasks, task => {
+      return task.id === id;
+    });
     if (item !== -1) {
-      var { tasks } = this.state;
       tasks[item].status = !tasks[item].status;
       this.setState({
         tasks: tasks
@@ -181,25 +189,79 @@ class App extends Component {
     });
   };
 
+  onSearch = kw => {
+    this.setState({
+      keyword: kw
+    });
+  };
+
+  onSort = (sortBy, sortValue) => {
+    this.setState({
+      sortBy: sortBy,
+      sortValue: sortValue
+    });
+  };
   render() {
     //Đọc dữ liệu state rồi truyền vào 1 biến task
-    var { tasks, isDisplayForm, taskEditing } = this.state;
-    if (this.state.filter) {
-      if (this.state.filter.name) {
+    var {
+      tasks,
+      isDisplayForm,
+      taskEditing,
+      filter,
+      keyword,
+      sortBy,
+      sortValue
+    } = this.state;
+    //Filter trên gridview
+    if (filter) {
+      if (filter.name) {
         tasks = tasks.filter(task => {
-          return task.name.toLowerCase().indexOf(this.state.filter.name) !== -1;
+          return task.name.toLowerCase().indexOf(filter.name) !== -1;
         });
       }
       tasks = tasks.filter(task => {
-        if (this.state.filter.status === -1) {
+        if (filter.status === -1) {
           return tasks;
         } else {
-          return (
-            task.status === (this.state.filter.status === 1 ? true : false)
-          );
+          return task.status === (filter.status === 1 ? true : false);
         }
       });
     }
+
+    //Filter trên thanh tìm kiếm
+
+    // tasks = tasks.filter(task => { //Filter không dùng lodash
+    //   return task.name.toLowerCase().indexOf(keyword.toLowerCase()) !== -1;
+    // });
+
+    //Filter sử dụng lodash
+    tasks = _.filter(tasks, task => {
+      return task.name.toLowerCase().indexOf(keyword.toLowerCase()) !== -1;
+    });
+
+    //Sắp xếp
+    if (sortBy === "name") {
+      tasks.sort((a, b) => {
+        if (a.name > b.name) {
+          return sortValue;
+        } else if (a.name < b.name) {
+          return -sortValue;
+        } else {
+          return 0;
+        }
+      });
+    } else {
+      tasks.sort((a, b) => {
+        if (a.status > b.status) {
+          return -sortValue;
+        } else if (a.status < b.status) {
+          return sortValue;
+        } else {
+          return 0;
+        }
+      });
+    }
+
     var elmTskForm = isDisplayForm ? (
       <TaskForm
         onSubmit={this.onSubmit}
@@ -247,7 +309,7 @@ class App extends Component {
             >
               Generate Data
             </button> */}
-            <TaskControl />
+            <TaskControl onSearch={this.onSearch} onSort={this.onSort} />
             {/* Truyền dữ liệu sang TaskList */}
             <TaskList
               tasks={tasks}
