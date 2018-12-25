@@ -4,14 +4,13 @@ import TaskForm from "./components/TaskForm";
 import TaskControl from "./components/TaskControl";
 import TaskList from "./components/TaskList";
 import _ from "lodash";
-import DEMO from "./training/demo";
+import { connect } from "react-redux";
+import * as actions from "./actions/index";
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      tasks: [], //id: duy nhất, name, status
-      isDisplayForm: false,
       taskEditing: null,
       filter: {
         name: "",
@@ -23,78 +22,13 @@ class App extends Component {
     };
   }
 
-  //Hàm thực thi khi tải lại thì load localStorage vào trong state
-  componentWillMount() {
-    //Kiểm tra localStorage
-    if (localStorage && localStorage.getItem("tasks")) {
-      var task = JSON.parse(localStorage.getItem("tasks")); //Chuyển json về object
-      this.setState({
-        tasks: task
-      });
-    }
-  }
-
-  //Hàm random
-  rd() {
-    return Math.floor((1 + Math.random()) * 0x10000)
-      .toString(16)
-      .substring(1);
-  }
-
-  //Gen ID
-  generateID() {
-    return (
-      this.rd() +
-      this.rd() +
-      "-" +
-      this.rd() +
-      "-" +
-      this.rd() +
-      "-" +
-      this.rd() +
-      "-" +
-      this.rd() +
-      this.rd()
-    );
-  }
-
   //Thêm mới công việc
   addNewJob = () => {
-    this.setState({
-      isDisplayForm: !this.state.isDisplayForm
-    });
+    this.props.onToggleForm();
   };
 
   cancelJob = () => {
-    this.setState({
-      isDisplayForm: false,
-      taskEditing: null
-    });
-  };
-
-  //Nhận giá trị từ TaskForm truyền lên
-  onSubmit = data => {
-    var { tasks } = this.state;
-    //Thêm mới
-    if (data.id === "") {
-      var task = {
-        id: this.generateID(),
-        name: data.name,
-        status: data.status === "true" ? true : false //Ép kiểu
-      };
-      tasks.push(task); //Đẩy giá trị mới vào trong tasks
-    } else {
-      //Sửa
-      var index = this.findIndex(data.id);
-      tasks[index] = data;
-    }
-    this.setState({
-      tasks: tasks,
-      isDisplayForm: false,
-      taskEditing: null
-    });
-    //Lưu vào localStore convert sang json để lưu lại
-    localStorage.setItem("tasks", JSON.stringify(tasks));
+    this.props.onToggleForm();
   };
 
   onUpdateStatus = id => {
@@ -178,30 +112,23 @@ class App extends Component {
   };
   render() {
     //Đọc dữ liệu state rồi truyền vào 1 biến task
-    var {
-      tasks,
-      isDisplayForm,
-      taskEditing,
-      filter,
-      keyword,
-      sortBy,
-      sortValue
-    } = this.state;
+    var { taskEditing, filter, keyword, sortBy, sortValue } = this.state;
+    var { isDisplayForm } = this.props;
     //Filter trên gridview
-    if (filter) {
-      if (filter.name) {
-        tasks = tasks.filter(task => {
-          return task.name.toLowerCase().indexOf(filter.name) !== -1;
-        });
-      }
-      tasks = tasks.filter(task => {
-        if (filter.status === -1) {
-          return tasks;
-        } else {
-          return task.status === (filter.status === 1 ? true : false);
-        }
-      });
-    }
+    // if (filter) {
+    //   if (filter.name) {
+    //     tasks = tasks.filter(task => {
+    //       return task.name.toLowerCase().indexOf(filter.name) !== -1;
+    //     });
+    //   }
+    //   tasks = tasks.filter(task => {
+    //     if (filter.status === -1) {
+    //       return tasks;
+    //     } else {
+    //       return task.status === (filter.status === 1 ? true : false);
+    //     }
+    //   });
+    // }
 
     //Filter trên thanh tìm kiếm
 
@@ -210,39 +137,35 @@ class App extends Component {
     // });
 
     //Filter sử dụng lodash
-    tasks = _.filter(tasks, task => {
-      return task.name.toLowerCase().indexOf(keyword.toLowerCase()) !== -1;
-    });
+    // tasks = _.filter(tasks, task => {
+    //   return task.name.toLowerCase().indexOf(keyword.toLowerCase()) !== -1;
+    // });
 
-    //Sắp xếp
-    if (sortBy === "name") {
-      tasks.sort((a, b) => {
-        if (a.name > b.name) {
-          return sortValue;
-        } else if (a.name < b.name) {
-          return -sortValue;
-        } else {
-          return 0;
-        }
-      });
-    } else {
-      tasks.sort((a, b) => {
-        if (a.status > b.status) {
-          return -sortValue;
-        } else if (a.status < b.status) {
-          return sortValue;
-        } else {
-          return 0;
-        }
-      });
-    }
+    // //Sắp xếp
+    // if (sortBy === "name") {
+    //   tasks.sort((a, b) => {
+    //     if (a.name > b.name) {
+    //       return sortValue;
+    //     } else if (a.name < b.name) {
+    //       return -sortValue;
+    //     } else {
+    //       return 0;
+    //     }
+    //   });
+    // } else {
+    //   tasks.sort((a, b) => {
+    //     if (a.status > b.status) {
+    //       return -sortValue;
+    //     } else if (a.status < b.status) {
+    //       return sortValue;
+    //     } else {
+    //       return 0;
+    //     }
+    //   });
+    // }
 
     var elmTskForm = isDisplayForm ? (
-      <TaskForm
-        onSubmit={this.onSubmit}
-        cancelJob={this.cancelJob}
-        taskEditing={taskEditing}
-      />
+      <TaskForm cancelJob={this.cancelJob} taskEditing={taskEditing} />
     ) : (
       ""
     );
@@ -287,7 +210,6 @@ class App extends Component {
             <TaskControl onSearch={this.onSearch} onSort={this.onSort} />
             {/* Truyền dữ liệu sang TaskList */}
             <TaskList
-              tasks={tasks}
               onUpdateStatus={this.onUpdateStatus}
               onDelete={this.onDelete}
               onUpdate={this.onUpdate}
@@ -300,4 +222,21 @@ class App extends Component {
   }
 }
 
-export default App;
+const mapStateToProps = state => {
+  return {
+    isDisplayForm: state.isDisplayForm
+  };
+};
+
+const mapDispathToProps = (dispatch, props) => {
+  return {
+    onToggleForm: () => {
+      dispatch(actions.toggleForm());
+    }
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispathToProps
+)(App);
