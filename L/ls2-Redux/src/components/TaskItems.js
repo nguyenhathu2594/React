@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
+import * as actions from "./../actions/index";
 
 class TaskItems extends Component {
   onUpdateStatus = () => {
@@ -6,10 +8,12 @@ class TaskItems extends Component {
     this.props.onUpdateStatus(this.props.task.id);
   };
   onDelete = () => {
-    this.props.onDelete(this.props.task.id);
+    this.props.onDeleteItem(this.props.task.id);
+    this.props.onCloseForm();
   };
   onUpdate = () => {
-    this.props.onUpdate(this.props.task.id);
+    this.props.onOpenForm();
+    this.props.onEditItem(this.props.task);
   };
   render() {
     //Nhận giá trị từ TaskList(2 giá trị)
@@ -51,4 +55,31 @@ class TaskItems extends Component {
   }
 }
 
-export default TaskItems;
+const mapStateToProps = state => {
+  return {};
+};
+
+const mapDispatchToProps = (dispatch, props) => {
+  return {
+    onUpdateStatus: id => {
+      dispatch(actions.updateStatus(id));
+    },
+    onDeleteItem: id => {
+      dispatch(actions.deleteItem(id));
+    },
+    onCloseForm: () => {
+      dispatch(actions.closeForm());
+    },
+    onOpenForm: () => {
+      dispatch(actions.openForm());
+    },
+    onEditItem: task => {
+      dispatch(actions.editTask(task));
+    }
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(TaskItems);

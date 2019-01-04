@@ -27,43 +27,6 @@ class App extends Component {
     this.props.onToggleForm();
   };
 
-  cancelJob = () => {
-    this.props.onToggleForm();
-  };
-
-  onUpdateStatus = id => {
-    var { tasks } = this.state;
-    //var item = this.findIndex(id); //Sử dụng tự thiết kế
-    //Sử dụng lodash
-    var item = _.findIndex(tasks, task => {
-      return task.id === id;
-    });
-    if (item !== -1) {
-      tasks[item].status = !tasks[item].status;
-      this.setState({
-        tasks: tasks
-      });
-      //Lưu vào localStore convert sang json để lưu lại
-      localStorage.setItem("tasks", JSON.stringify(tasks));
-    }
-  };
-
-  onDelete = id => {
-    var { tasks } = this.state;
-    var item = this.findIndex(id);
-    if (item !== -1) {
-      tasks.splice(item, 1);
-      this.setState({
-        tasks: tasks
-      });
-      //Lưu vào localStore convert sang json để lưu lại
-      localStorage.setItem("tasks", JSON.stringify(tasks));
-
-      //Đóng form thêm mới
-      this.cancelJob();
-    }
-  };
-
   onUpdate = id => {
     var { tasks } = this.state;
     var item = this.findIndex(id);
@@ -163,12 +126,6 @@ class App extends Component {
     //     }
     //   });
     // }
-
-    var elmTskForm = isDisplayForm ? (
-      <TaskForm cancelJob={this.cancelJob} taskEditing={taskEditing} />
-    ) : (
-      ""
-    );
     return (
       <div className="container">
         <div className="text-center">
@@ -181,7 +138,7 @@ class App extends Component {
               isDisplayForm ? "col-xs-4 col-sm-4 col-md-4 col-lg-4" : ""
             }
           >
-            {elmTskForm}
+            <TaskForm taskEditing={taskEditing} />
           </div>
 
           <div
@@ -209,12 +166,7 @@ class App extends Component {
             </button> */}
             <TaskControl onSearch={this.onSearch} onSort={this.onSort} />
             {/* Truyền dữ liệu sang TaskList */}
-            <TaskList
-              onUpdateStatus={this.onUpdateStatus}
-              onDelete={this.onDelete}
-              onUpdate={this.onUpdate}
-              onFilter={this.onFilter}
-            />
+            <TaskList onUpdate={this.onUpdate} onFilter={this.onFilter} />
           </div>
         </div>
       </div>

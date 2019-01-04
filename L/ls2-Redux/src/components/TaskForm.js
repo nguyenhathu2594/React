@@ -35,12 +35,16 @@ class TaskForm extends Component {
   onSubmit = event => {
     event.preventDefault();
     this.props.onAddTask(this.state);
+    this.cancelJob();
   };
 
   cancelJob = () => {
-    this.props.cancelJob();
+    this.props.onCloseForm();
   };
   render() {
+    if (!this.props.isDisplayForm) {
+      return "";
+    }
     return (
       <div className="panel panel-warning">
         <div className="panel-heading">
@@ -98,13 +102,18 @@ class TaskForm extends Component {
 }
 
 const mapStateToProps = state => {
-  return {};
+  return {
+    isDisplayForm: state.isDisplayForm
+  };
 };
 
 const mapDispatchToProps = (dispatch, props) => {
   return {
     onAddTask: task => {
       dispatch(actions.addTask(task));
+    },
+    onCloseForm: () => {
+      dispatch(actions.closeForm());
     }
   };
 };

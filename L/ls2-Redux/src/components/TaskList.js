@@ -32,8 +32,6 @@ class TaskList extends Component {
     var elmTasks = tasks.map((task, index) => {
       return (
         <TaskItems
-          onUpdateStatus={this.props.onUpdateStatus}
-          onDelete={this.props.onDelete}
           onUpdate={this.props.onUpdate}
           key={task.id}
           index={index}

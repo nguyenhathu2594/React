@@ -30,3 +30,24 @@ export const closeForm = () => {
     type: types.CLOSE_FORM
   };
 };
+
+export const updateStatus = id => {
+  return {
+    type: types.UPDATE_STATUS,
+    id
+  };
+};
+
+export const deleteItem = id => {
+  return {
+    type: types.DELETE_ITEM,
+    id
+  };
+};
+
+export const editTask = task => {
+  return {
+    type: types.UPDATE_TASK,
+    task
+  };
+};

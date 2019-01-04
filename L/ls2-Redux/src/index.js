@@ -9,7 +9,10 @@ import { Provider } from "react-redux";
 
 //Khởi tạo store
 //Khởi tạo Provider làm trung chuyển giữa view và reducer(Kết nối)
-const store = createStore(myReducer);
+const store = createStore(
+  myReducer,
+  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+);
 ReactDOM.render(
   <Provider store={store}>
     <App />
