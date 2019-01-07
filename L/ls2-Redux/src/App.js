@@ -3,7 +3,6 @@ import "./App.css";
 import TaskForm from "./components/TaskForm";
 import TaskControl from "./components/TaskControl";
 import TaskList from "./components/TaskList";
-import _ from "lodash";
 import { connect } from "react-redux";
 import * as actions from "./actions/index";
 
@@ -11,11 +10,6 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      taskEditing: null,
-      filter: {
-        name: "",
-        status: -1
-      },
       keyword: "",
       sortBy: "name",
       sortValue: 1
@@ -24,7 +18,17 @@ class App extends Component {
 
   //Thêm mới công việc
   addNewJob = () => {
-    this.props.onToggleForm();
+    var { isEditItem } = this.props;
+    if (isEditItem && isEditItem.id !== "") {
+      this.props.onOpenForm();
+    } else {
+      this.props.onToggleForm();
+    }
+    this.props.onClearTask({
+      id: "",
+      name: "",
+      status: false
+    });
   };
 
   onUpdate = id => {
@@ -37,28 +41,6 @@ class App extends Component {
       });
       this.addNewJob();
     }
-  };
-
-  //Tìm giá trị
-  findIndex = id => {
-    var { tasks } = this.state;
-    var result = -1;
-    tasks.forEach((task, index) => {
-      if (task.id === id) {
-        result = index;
-      }
-    });
-    return result;
-  };
-
-  onFilter = (filterName, filterStatus) => {
-    filterStatus = parseInt(filterStatus, 10);
-    this.setState({
-      filter: {
-        name: filterName.toLowerCase(),
-        status: filterStatus
-      }
-    });
   };
 
   onSearch = kw => {
@@ -75,23 +57,8 @@ class App extends Component {
   };
   render() {
     //Đọc dữ liệu state rồi truyền vào 1 biến task
-    var { taskEditing, filter, keyword, sortBy, sortValue } = this.state;
+    var { keyword, sortBy, sortValue } = this.state;
     var { isDisplayForm } = this.props;
-    //Filter trên gridview
-    // if (filter) {
-    //   if (filter.name) {
-    //     tasks = tasks.filter(task => {
-    //       return task.name.toLowerCase().indexOf(filter.name) !== -1;
-    //     });
-    //   }
-    //   tasks = tasks.filter(task => {
-    //     if (filter.status === -1) {
-    //       return tasks;
-    //     } else {
-    //       return task.status === (filter.status === 1 ? true : false);
-    //     }
-    //   });
-    // }
 
     //Filter trên thanh tìm kiếm
 
@@ -138,7 +105,7 @@ class App extends Component {
               isDisplayForm ? "col-xs-4 col-sm-4 col-md-4 col-lg-4" : ""
             }
           >
-            <TaskForm taskEditing={taskEditing} />
+            <TaskForm />
           </div>
 
           <div
@@ -166,7 +133,7 @@ class App extends Component {
             </button> */}
             <TaskControl onSearch={this.onSearch} onSort={this.onSort} />
             {/* Truyền dữ liệu sang TaskList */}
-            <TaskList onUpdate={this.onUpdate} onFilter={this.onFilter} />
+            <TaskList />
           </div>
         </div>
       </div>
@@ -176,7 +143,8 @@ class App extends Component {
 
 const mapStateToProps = state => {
   return {
-    isDisplayForm: state.isDisplayForm
+    isDisplayForm: state.isDisplayForm,
+    isEditItem: state.isEditItem
   };
 };
 
@@ -184,6 +152,12 @@ const mapDispathToProps = (dispatch, props) => {
   return {
     onToggleForm: () => {
       dispatch(actions.toggleForm());
+    },
+    onClearTask: task => {
+      dispatch(actions.editTask(task));
+    },
+    onOpenForm: () => {
+      dispatch(actions.openForm());
     }
   };
 };
