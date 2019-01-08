@@ -8,4 +8,5 @@ export const UPDATE_STATUS = "UPDATE_STATUS"; //Update Status trong TaskItems
 export const DELETE_ITEM = "DELETE_ITEM"; //Xóa Item trong TaskItems
 export const UPDATE_TASK = "UPDATE_TASK"; //Update Item trong TaskItems
 export const FILTER_TABLE = "FILTER_TABLE";
-// export const UPDATE_TASK = "UPDATE_TASK";
+export const SEARCH = "SEARCH";
+export const SORT = "SORT";

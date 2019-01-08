@@ -1,5 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { Component } from "react";
+import { connect } from "react-redux";
+import * as actions from "./../actions/index";
 
 class TaskSearch extends Component {
   constructor(props) {
@@ -22,7 +24,6 @@ class TaskSearch extends Component {
     this.props.onSearch(this.state.keyword);
   };
   render() {
-    var { keyword } = this.state;
     return (
       <div className="col-xs-6 col-sm-6 col-md-6 col-lg-6">
         <div className="input-group">
@@ -31,7 +32,7 @@ class TaskSearch extends Component {
             type="text"
             className="form-control"
             placeholder="Nhập từ khóa ..."
-            value={keyword}
+            value={this.state.keyword}
             onChange={this.onChange}
           />
           <span className="input-group-btn">
@@ -50,4 +51,19 @@ class TaskSearch extends Component {
   }
 }
 
-export default TaskSearch;
+const mapStateToProps = state => {
+  return {};
+};
+
+const mapDispathToProps = (dispatch, props) => {
+  return {
+    onSearch: keyword => {
+      dispatch(actions.searchTask(keyword));
+    }
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispathToProps
+)(TaskSearch);

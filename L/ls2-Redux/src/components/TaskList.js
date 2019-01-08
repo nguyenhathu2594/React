@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import TaskItems from "./TaskItems";
 import { connect } from "react-redux";
 import * as actions from "./../actions/index";
+import _ from "lodash";
 
 class TaskList extends Component {
   constructor(props) {
@@ -27,7 +28,7 @@ class TaskList extends Component {
   };
   render() {
     //Nhận giá trị truyền từ App sang bằng gọi props
-    var { tasks, isFilterTable } = this.props;
+    var { tasks, isFilterTable, keyword, sort } = this.props;
     //Filter trên gridview
     if (isFilterTable) {
       if (isFilterTable.name) {
@@ -43,9 +44,38 @@ class TaskList extends Component {
         }
       });
     }
+
+    //Filter theo keyword
+    tasks = _.filter(tasks, task => {
+      return task.name.toLowerCase().indexOf(keyword.toLowerCase()) !== -1;
+    });
+
+    // //Sắp xếp
+    if (sort.by === "name") {
+      tasks.sort((a, b) => {
+        if (a.name > b.name) {
+          return sort.value;
+        } else if (a.name < b.name) {
+          return -sort.value;
+        } else {
+          return 0;
+        }
+      });
+    } else {
+      tasks.sort((a, b) => {
+        if (a.status > b.status) {
+          return -sort.value;
+        } else if (a.status < b.status) {
+          return sort.value;
+        } else {
+          return 0;
+        }
+      });
+    }
+
     //Đọc dữ liệu bằng for trong tasks
     var elmTasks = tasks.map((task, index) => {
-      return <TaskItems key={task.id} index={index + 1} task={task} />;
+      return <TaskItems key={task.id} index={index} task={task} />;
     });
     return (
       <table className="table table-bordered table-hover mt-15">
@@ -93,7 +123,9 @@ class TaskList extends Component {
 const mapStateToProps = state => {
   return {
     tasks: state.tasks,
-    isFilterTable: state.isFilterTable
+    isFilterTable: state.isFilterTable,
+    keyword: state.search,
+    sort: state.sort
   };
 };
 

@@ -7,15 +7,6 @@ import { connect } from "react-redux";
 import * as actions from "./actions/index";
 
 class App extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      keyword: "",
-      sortBy: "name",
-      sortValue: 1
-    };
-  }
-
   //Thêm mới công việc
   addNewJob = () => {
     var { isEditItem } = this.props;
@@ -43,56 +34,10 @@ class App extends Component {
     }
   };
 
-  onSearch = kw => {
-    this.setState({
-      keyword: kw
-    });
-  };
-
-  onSort = (sortBy, sortValue) => {
-    this.setState({
-      sortBy: sortBy,
-      sortValue: sortValue
-    });
-  };
   render() {
     //Đọc dữ liệu state rồi truyền vào 1 biến task
-    var { keyword, sortBy, sortValue } = this.state;
     var { isDisplayForm } = this.props;
 
-    //Filter trên thanh tìm kiếm
-
-    // tasks = tasks.filter(task => { //Filter không dùng lodash
-    //   return task.name.toLowerCase().indexOf(keyword.toLowerCase()) !== -1;
-    // });
-
-    //Filter sử dụng lodash
-    // tasks = _.filter(tasks, task => {
-    //   return task.name.toLowerCase().indexOf(keyword.toLowerCase()) !== -1;
-    // });
-
-    // //Sắp xếp
-    // if (sortBy === "name") {
-    //   tasks.sort((a, b) => {
-    //     if (a.name > b.name) {
-    //       return sortValue;
-    //     } else if (a.name < b.name) {
-    //       return -sortValue;
-    //     } else {
-    //       return 0;
-    //     }
-    //   });
-    // } else {
-    //   tasks.sort((a, b) => {
-    //     if (a.status > b.status) {
-    //       return -sortValue;
-    //     } else if (a.status < b.status) {
-    //       return sortValue;
-    //     } else {
-    //       return 0;
-    //     }
-    //   });
-    // }
     return (
       <div className="container">
         <div className="text-center">
@@ -123,15 +68,7 @@ class App extends Component {
               <span className="fa fa-plus mr-5" />
               Thêm công việc
             </button>
-            {/* &nbsp;
-            <button
-              type="button"
-              className="btn btn-danger"
-              onClick={this.onGenerateData}
-            >
-              Generate Data
-            </button> */}
-            <TaskControl onSearch={this.onSearch} onSort={this.onSort} />
+            <TaskControl />
             {/* Truyền dữ liệu sang TaskList */}
             <TaskList />
           </div>
